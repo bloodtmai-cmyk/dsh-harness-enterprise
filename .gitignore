@@ -38,3 +38,7 @@ apps/web/dist/
 worktrees/
 .agents/worktrees/
 .typert-*/
+
+# Local agent context and release-preparation notes
+/.codex/
+/OPEN_SOURCE_CHECKLIST.md
