@@ -21,8 +21,12 @@ The project is deliberately not an identity provider, MDM product, business-data
 | --- | --- |
 | Standard Harness | Upstream-compatible Web, Host, agent, tools, and plug-in runtime. Users may configure supported third-party model providers. |
 | Harness Enterprise Desktop | Electron shell, enterprise sign-in, Hub synchronization, local runtime hardening, managed updates, and local personal memory. |
-| DSH AI Hub | Separate control plane for authorization, model access records, managed artifacts, instructions, releases, and audit. |
+| [DSH AI Hub](https://github.com/bloodtmai-cmyk/dsh-ai-hub) | Companion control plane for authorization, model access records, managed artifacts, instructions, releases, and audit. |
 | Enterprise Gateway | Pluggable authentication and MCP gateway. It validates identity and enforces current Hub policy at `tools/list` and `tools/call`. |
+
+## Companion project
+
+Managed deployments pair this desktop with [DSH AI Hub](https://github.com/bloodtmai-cmyk/dsh-ai-hub). The Hub owns policy and artifact metadata; Harness Enterprise remains the user-facing runtime that consumes those decisions. They are separate services and can be developed independently, but their managed contracts are designed together.
 
 ## Managed model access
 
@@ -64,7 +68,7 @@ pnpm run verify-translation-pairing
 pnpm run verify-community-sanitization
 ```
 
-Start with [the development guide](docs/development.md), [architecture documentation](docs/architecture.md), and [community release checklist](OPEN_SOURCE_CHECKLIST.md).
+Start with [the development guide](docs/development.md) and [architecture documentation](docs/architecture.md).
 
 ## Upstream and license
 

@@ -21,8 +21,12 @@ Harness Enterprise 保留标准 DeepSeek Harness 运行时，并增加一个可�
 | --- | --- |
 | 标准 Harness | 保留上游 Web、Host、Agent、工具和插件运行时，用户可以配置受支持的第三方模型。 |
 | Harness Enterprise Desktop | 提供 Electron 桌面封装、企业登录、Hub 同步、本地运行时加固、受管升级和本地个人记忆。 |
-| DSH AI Hub | 独立控制面，管理授权、模型访问记录、受管制品、企业指令、客户端版本和审计。 |
+| [DSH AI Hub](https://github.com/bloodtmai-cmyk/dsh-ai-hub) | 配套控制面，管理授权、模型访问记录、受管制品、企业指令、客户端版本和审计。 |
 | Enterprise Gateway | 可替换的认证与 MCP 网关，在 `tools/list` 和 `tools/call` 阶段验证身份并执行 Hub 当前策略。 |
+
+## 配套项目
+
+企业托管部署将本桌面端与 [DSH AI Hub](https://github.com/bloodtmai-cmyk/dsh-ai-hub) 配合使用。Hub 维护策略和制品元数据，Harness Enterprise 作为面向用户的运行时消费这些决策。两者是可独立开发和部署的服务，但企业托管契约会协同设计。
 
 ## 模型接入
 
@@ -64,7 +68,7 @@ pnpm run verify-translation-pairing
 pnpm run verify-community-sanitization
 ```
 
-开发前可阅读[开发指南](docs/development.md)、[架构文档](docs/architecture.md)和[社区发布检查表](OPEN_SOURCE_CHECKLIST.md)。
+开发前可阅读[开发指南](docs/development.md)和[架构文档](docs/architecture.md)。
 
 ## 上游与许可证
 
