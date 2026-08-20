@@ -1,0 +1,56 @@
+name: Community CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: community-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      DSH_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify public-source boundaries
+        run: |
+          pnpm run verify-community-sanitization
+          pnpm run verify-third-party-notices
+          pnpm run verify-translation-pairing
+
+      - name: Type check
+        run: pnpm run typecheck
+
+      - name: Test managed enterprise surface
+        run: >-
+          pnpm exec vitest run
+          apps/desktop/tests/ai-hub-client.spec.ts
+          apps/desktop/tests/configuration.spec.ts
+          apps/desktop/tests/credential-store.spec.ts
+          apps/desktop/tests/login-language.spec.ts
+          apps/desktop/tests/main-lifecycle.spec.ts
+          apps/desktop/tests/workbuddy-oauth.spec.ts
+          packages/llm/llm-openai-compatible-managed/tests/managed.spec.ts

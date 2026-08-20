@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; font-src 'self'; media-src 'self'; style-src 'self'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+    <title>登录 - Harness Enterprise Desktop</title>
+    <link rel="icon" href="./assets/hero-whale.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./login.css">
+    <script src="./ambient.js" defer></script>
+    <script src="./login.js" defer></script>
+  </head>
+  <body>
+    <div class="hero-backdrop" aria-hidden="true"></div>
+
+    <main class="login-shell">
+      <section id="directory-panel" class="login-panel" aria-labelledby="login-title">
+        <canvas id="ambient-canvas" class="panel-ambient" aria-hidden="true"></canvas>
+        <div class="panel-brand">
+          <div class="product-lockup">
+            <span class="community-logo" aria-label="DSH">DSH</span>
+            <div class="product-copy">
+              <span class="harness-badge product-harness-badge" aria-label="Harness"><span>Harness</span></span>
+              <span class="product-subtitle" data-i18n="productSubtitle">企业智能工作台</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-heading">
+          <div>
+            <div class="section-label" data-i18n="accountSection">企业账号</div>
+            <h1 id="login-title" data-i18n="loginTitle">登录</h1>
+          </div>
+          <div class="language-switch" role="group" aria-label="Language">
+            <button type="button" data-language="zh" aria-pressed="true">中文</button>
+            <button type="button" data-language="en" aria-pressed="false">EN</button>
+          </div>
+        </div>
+
+        <form id="login-form" novalidate>
+          <label class="field">
+            <span data-i18n="workcode">工号</span>
+            <input id="workcode" name="workcode" type="text" inputmode="numeric" pattern="[0-9]{5,12}" autocomplete="username" maxlength="12" autofocus required>
+          </label>
+
+          <label class="field">
+            <span data-i18n="password">密码</span>
+            <input id="password" name="password" type="password" autocomplete="current-password" maxlength="512" required>
+          </label>
+
+          <button id="submit-button" type="submit">
+            <span class="button-label">登录</span>
+            <span class="button-spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+      </section>
+
+      <section id="key-panel" class="login-panel" aria-labelledby="key-title" hidden>
+        <div class="panel-brand">
+          <div class="product-lockup">
+            <span class="community-logo" aria-label="DSH">DSH</span>
+            <div class="product-copy">
+              <span class="harness-badge product-harness-badge" aria-label="Harness"><span>Harness</span></span>
+              <span class="product-subtitle" data-i18n="productSubtitle">企业智能工作台</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-heading">
+          <div>
+            <div class="section-label" data-i18n="modelSection">模型服务</div>
+            <h1 id="key-title" data-i18n="keyTitle">申请模型访问</h1>
+          </div>
+          <div class="language-switch" role="group" aria-label="Language">
+            <button type="button" data-language="zh" aria-pressed="true">中文</button>
+            <button type="button" data-language="en" aria-pressed="false">EN</button>
+          </div>
+        </div>
+
+        <form id="key-form" novalidate>
+          <button id="key-submit-button" type="submit">
+            <span class="button-label">继续</span>
+            <span class="button-spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+      </section>
+
+      <div id="feedback" class="feedback" role="alert" aria-live="polite" hidden></div>
+      <div id="key-feedback" class="feedback" role="alert" aria-live="polite" hidden></div>
+
+      <footer data-i18n="footer">企业身份验证</footer>
+    </main>
+  </body>
+</html>

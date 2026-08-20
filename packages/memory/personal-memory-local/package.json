@@ -1,0 +1,36 @@
+{
+  "name": "@deepseek-ai/dsh-personal-memory-local",
+  "description": "Encrypted desktop-local personal memory bridge for Harness Enterprise Desktop",
+  "version": "0.1.0-rc.5",
+  "publishConfig": { "access": "public" },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bloodtmai-cmyk/dsh-harness-enterprise.git",
+    "directory": "packages/memory/personal-memory-local"
+  },
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": { "types": "./lib/types/index.d.ts", "default": "./lib/index.js" },
+    "./invariant": { "types": "./lib/types/invariant.d.ts", "default": "./lib/invariant.js" },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "files": ["lib/index.js", "lib/invariant.js", "lib/types/**/*.d.ts"],
+  "license": "MIT",
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "workspace:^",
+    "@deepseek-ai/dsh-invariants": "workspace:^"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "workspace:^",
+    "@deepseek-ai/dsh-agent": "workspace:^",
+    "@deepseek-ai/dsh-invariants": "workspace:^",
+    "@deepseek-ai/dsh-llm": "workspace:^",
+    "@deepseek-ai/dsh-session": "workspace:^",
+    "@deepseek-ai/dsh-system-prompt": "workspace:^",
+    "@deepseek-ai/schemastery": "workspace:^"
+  },
+  "scripts": { "bundle": "tsdown", "watch": "tsdown --watch" }
+}

@@ -1,0 +1,223 @@
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.trigger {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: calc(100% + 8px);
+  height: 34px;
+  margin: 4px -4px 0;
+  padding: 6px 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 14px;
+  line-height: 22px;
+  cursor: pointer;
+}
+
+.trigger span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trigger:hover,
+.trigger:focus-visible {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.trigger:focus-visible,
+.updateTrigger:focus-visible,
+.close:focus-visible {
+  outline: 2px solid var(--dsw-alias-border-l3);
+  outline-offset: 2px;
+}
+
+.updateTrigger {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--dsw-alias-button-info-fill);
+  color: var(--dsw-static-neutral-bluish-00);
+  font: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.updateTrigger:hover {
+  background: var(--dsw-alias-button-info-hover);
+}
+
+.updateTrigger:disabled {
+  cursor: progress;
+  opacity: 0.64;
+}
+
+.updateDot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--dsw-static-neutral-bluish-00);
+  border-radius: 50%;
+  background: var(--dsw-alias-status-warning);
+}
+
+.trigger.rail {
+  flex: none;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin: 4px 0 0;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.mask {
+  position: absolute;
+  inset: 0;
+  background: var(--dsw-alias-bg-mask-1);
+  backdrop-filter: var(--dsw-mask-blur);
+}
+
+.panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(1080px, 100%);
+  height: min(820px, calc(100dvh - 64px));
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 10px;
+  background: var(--dsw-alias-bg-layer-2);
+  box-shadow: var(--dsw-shadow-lv3);
+  animation: panelEnter 160ms ease-out;
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
+}
+
+.header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 84px;
+  padding: 18px 20px 18px 24px;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--dsw-alias-border-l3);
+}
+
+.eyebrow {
+  margin: 0 0 3px;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.header h1 {
+  margin: 0;
+  color: var(--dsw-alias-label-primary);
+  font-size: 22px;
+  line-height: 30px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  cursor: pointer;
+}
+
+.close:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 24px 28px;
+}
+
+@keyframes panelEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(.992);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 720px) {
+  .overlay {
+    padding: 12px;
+  }
+
+  .panel {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    border-radius: 8px;
+  }
+
+  .header {
+    min-height: 68px;
+    padding: 14px 12px 12px 16px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    animation: none;
+    scroll-behavior: auto;
+  }
+}

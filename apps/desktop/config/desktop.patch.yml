@@ -1,0 +1,175 @@
+# Desktop policy overlay. The Electron host supplies deployment values through
+# its validated launch environment; secrets never enter this file.
+
+- id: hmr
+  disabled: true
+
+# Managed turn safety cannot be relaxed from the client settings surface.
+# A breaker opens before the next provider request, while a new user turn gets
+# a fresh budget.
+- id: agent-loop
+  config:
+    maxStepsPerTurn: 24
+    maxRequestAttemptsPerStep: 4
+    maxTokensPerTurn: 500000
+
+# The local Web surface is an Electron transport, not a user-facing browser
+# server. The server resolves this environment variable at boot and rejects
+# every HTTP/WebSocket request that does not carry the per-run bearer token.
+- id: webserver
+  config:
+    host: 127.0.0.1
+    port: 0
+    accessTokenEnv: DSH_DESKTOP_WEB_ACCESS_TOKEN
+
+- id: llm-deepseek
+  disabled: true
+
+- id: llm-pi-ai
+  disabled: true
+
+- id: ui-settings-models
+  disabled: true
+
+# Keep preference rows writable while removing the raw settings-document escape
+# hatch. The Host also rejects the RPC so a renderer cannot bypass the hidden UI.
+- id: api-gateway
+  config:
+    settingsDocumentOpen: false
+    settingsNamespaceAllowlist:
+      - locale
+      - ui-conversation
+      - ui-theme
+
+# Desktop runs as a managed product rather than an editable Cordis assembly.
+# Hide every local plugin/configuration surface and remove the in-memory
+# self-modification runtime used by the shipped `cordis` agent preset.
+- id: ui-settings-plugins
+  disabled: true
+
+- id: ui-settings-plugin-inventory
+  disabled: true
+
+- id: ui-agent-preset
+  disabled: true
+
+- id: cordis-host-runner
+  disabled: true
+
+- id: cordis-client-runner
+  disabled: true
+
+- id: ui-cordis
+  disabled: true
+
+# The former native web_search route requires its own DeepSeek credential.
+# Managed desktop exposes only Hub-approved capabilities; direct third-party
+# MCP connections must not bypass AI Hub governance.
+- id: web-search-deepseek
+  disabled: true
+
+- id: session-telemetry-otel
+  disabled: true
+
+- id: skill-filesystem
+  config:
+    providerName: filesystem
+    includeDefaultRoots: false
+    customSkillDirs:
+      - !!js process.env.DSH_HUB_SKILL_DIR
+
+# Enterprise instructions are supplied only by AI Hub. Disable user-global,
+# project, CLAUDE, and local-overlay discovery even when those files exist.
+- id: agent-instructions
+  # The web application bundle disables this plug-in by default. Managed
+  # desktop must explicitly re-enable it before supplying the Hub policy.
+  disabled: false
+  config:
+    maxBytes: 0
+    managedInstructionFile: !!js process.env.DSH_HUB_AGENTS_FILE
+    managedInstructionHashFile: !!js process.env.DSH_HUB_AGENTS_SHA256_FILE
+
+- id: agent-presets
+  config:
+    default: standard
+    includeUserRoot: false
+    allowUserDefault: false
+
+# Desktop shell and filesystem tools always use the built-in OS sandbox stack.
+# Managed mode pins workspace-write instead of inheriting a user process override.
+- id: sandbox-policy
+  config:
+    mode: workspace-write
+    workspaceRoot: !!js process.cwd()
+
+# The generic Windows native picker launches a separate koffi/COM worker.
+# Electron uses the in-app browser pair instead, avoiding worker startup and
+# keeping folder selection inside the application window on every platform.
+- id: directory-picker
+  disabled: true
+
+- id: agent-default-model
+  config:
+    provider: managed
+    model: !!js process.env.MODEL_GATEWAY_DEFAULT_MODEL
+
+- insert:
+    - id: llm-openai-compatible-managed
+      name: '@deepseek-ai/dsh-llm-openai-compatible-managed'
+      config:
+        provider: managed
+        displayName: Managed Model Gateway
+        baseURLEnv: MODEL_GATEWAY_BASE_URL
+        apiKeyEnv: MODEL_GATEWAY_API_KEY
+
+    - id: desktop-directory-picker-backend
+      name: '@deepseek-ai/dsh-host-directory-picker-browse'
+
+    - id: desktop-directory-picker-ui
+      name: '@deepseek-ai/dsh-client-ui-directory-picker-browse'
+
+    # Presentation-only Client plug-in: compact live reasoning and Tool steps
+    # without altering the durable transcript or audit projection.
+    - id: ui-stream-activity
+      name: '@deepseek-ai/dsh-client-ui-stream-activity'
+
+    - id: session-audit-ai-hub
+      name: '@deepseek-ai/dsh-session-audit-ai-hub'
+      config:
+        hubBaseURL: !!js process.env.DSH_AI_HUB_BASE_URL
+        tokenBrokerURL: !!js process.env.DSH_DESKTOP_MCP_BROKER_URL
+        tokenBrokerSecret: !!js process.env.DSH_DESKTOP_MCP_BROKER_SECRET
+        installationId: !!js process.env.DSH_CLIENT_INSTALLATION_ID
+        defaultModel: !!js process.env.MODEL_GATEWAY_DEFAULT_MODEL
+
+    - id: personal-memory-local
+      name: '@deepseek-ai/dsh-personal-memory-local'
+      config:
+        tokenBrokerURL: !!js process.env.DSH_DESKTOP_MCP_BROKER_URL
+        tokenBrokerSecret: !!js process.env.DSH_DESKTOP_MCP_BROKER_SECRET
+        maxPromptEntries: 8
+        maxPromptChars: 2000
+        snapshotRefreshMs: 5000
+        maxQueryResults: 5
+        autoJournalMinChars: 80
+
+    - id: ui-settings-personal-memory
+      name: '@deepseek-ai/dsh-client-ui-settings-personal-memory'
+
+    - id: desktop-workbuddy-mcp
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: workbuddy
+        transport: streamable-http
+        url: !!js process.env.DSH_DESKTOP_MCP_URL
+        headers: {}
+        includeSessionMeta: true
+        toolRefreshIntervalMs: 30000
+        bearerTokenBroker:
+          url: !!js process.env.DSH_DESKTOP_MCP_BROKER_URL
+          secret: !!js process.env.DSH_DESKTOP_MCP_BROKER_SECRET
+        toolGuidance: >-
+          WorkBuddy identity is already bound to the current OAuth login and is injected by the gateway.
+          Never ask the user for a workcode or password, never inspect the shell environment for identity,
+          and never populate identity arguments from user input. Call tools with business parameters only.
+        failOnStartupError: true

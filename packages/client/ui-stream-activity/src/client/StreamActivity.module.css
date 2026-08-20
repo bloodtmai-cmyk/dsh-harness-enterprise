@@ -1,0 +1,105 @@
+/*
+ * Stable data attributes are owned by ui-conversation/ui-tool. This plug-in
+ * deliberately avoids generated class names so its presentation can be
+ * upgraded independently without taking ownership of conversation behavior.
+ */
+
+[data-stream-activity-surface] [data-stream-step] {
+  min-width: 0;
+  margin-block: -4px;
+  opacity: 0.82;
+  transition: opacity 160ms ease;
+}
+
+[data-stream-activity-surface] [data-stream-step]:hover,
+[data-stream-activity-surface] [data-stream-step]:has([data-open='true']) {
+  opacity: 1;
+}
+
+[data-stream-activity-surface] [data-stream-step] [data-disclosure-row] {
+  height: 28px;
+  padding-inline: 3px;
+  border-radius: 4px;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+[data-stream-activity-surface] [data-stream-step] [data-disclosure-row]:hover {
+  background: color-mix(in srgb, var(--dsw-alias-interactive-bg-hover) 68%, transparent);
+}
+
+/* The compact active marker replaces the wide shimmer used by the base rows. */
+[data-stream-activity-surface] [data-stream-step][data-state='running'] {
+  opacity: 1;
+}
+
+[data-stream-activity-surface] [data-stream-step][data-state='running'] [data-disclosure-row]::after {
+  display: none;
+}
+
+[data-stream-activity-surface] [data-stream-step][data-state='running'] [data-disclosure-row]::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  width: 2px;
+  height: 14px;
+  border-radius: 1px;
+  background: var(--dsw-alias-state-business-primary);
+  opacity: 0.8;
+  animation: dsh-stream-active-pulse 1.4s ease-in-out infinite;
+}
+
+/* Expanded completed work reads as one activity rail instead of stacked cards. */
+[data-stream-activity-surface] [data-stream-process='settled'] {
+  margin-block: -2px;
+}
+
+[data-stream-activity-surface] [data-stream-process-body] {
+  gap: 4px;
+  min-width: 0;
+  margin: 4px 0 2px 7px;
+  padding: 0 0 2px 14px;
+  border-inline-start: 1px solid var(--dsw-alias-border-l1);
+}
+
+/* Calm, localized turn activity. The icon carries motion, not the full label. */
+[data-stream-activity-surface] [data-stream-turn-status] {
+  gap: 6px;
+  height: 24px;
+  background: none;
+  color: var(--dsw-alias-label-tertiary);
+  -webkit-text-fill-color: currentColor;
+  animation: none;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+[data-stream-activity-surface] [data-stream-turn-status] > svg {
+  flex: none;
+  color: var(--dsw-alias-state-business-primary);
+  animation: dsh-stream-icon-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes dsh-stream-active-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.9; }
+}
+
+@keyframes dsh-stream-icon-pulse {
+  0%, 100% { opacity: 0.45; transform: scale(0.94); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-stream-activity-surface] [data-stream-step],
+  [data-stream-activity-surface] [data-stream-step] [data-disclosure-row] {
+    transition: none;
+  }
+
+  [data-stream-activity-surface] [data-stream-step][data-state='running'] [data-disclosure-row]::before,
+  [data-stream-activity-surface] [data-stream-turn-status] > svg {
+    animation: none;
+    opacity: 0.8;
+    transform: none;
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib/types"
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../../../vendor/cordis" },
+    { "path": "../../../vendor/schemastery" },
+    { "path": "../../core/tools" },
+    { "path": "../../core/system-prompt" },
+    { "path": "../../interaction/user-approval" },
+    { "path": "../../runtime-diagnostics/invariants" }
+  ]
+}

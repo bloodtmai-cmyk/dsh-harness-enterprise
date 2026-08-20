@@ -1,0 +1,117 @@
+{
+  "name": "@deepseek-ai/dsh-desktop",
+  "description": "Electron desktop host for Harness Enterprise Desktop",
+  "version": "0.1.0-rc.28",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bloodtmai-cmyk/dsh-harness-enterprise.git",
+    "directory": "apps/desktop"
+  },
+  "type": "module",
+  "main": "lib/main.js",
+  "files": [
+    "lib/*.js",
+    "config",
+    "renderer"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev:built": "electron .",
+    "generate:icons": "node scripts/generate-icons.mjs",
+    "pack:mac:built": "npm run generate:icons && electron-builder --mac dmg --publish never",
+    "pack:win:built": "npm run generate:icons && electron-builder --win nsis --x64 --publish never --config.npmRebuild=false"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh": "workspace:^",
+    "@wecom/cli": "1.1.0",
+    "electron-updater": "6.8.9",
+    "fflate": "^0.8.2",
+    "jose": "6.2.3",
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@types/jsdom": "28.0.3",
+    "electron": "43.4.0",
+    "electron-builder": "26.15.3",
+    "jsdom": "29.1.1",
+    "sharp": "^0.35.3"
+  },
+  "build": {
+    "appId": "ai.deepseek.harness.desktop",
+    "productName": "Harness Enterprise Desktop",
+    "asar": false,
+    "files": [
+      "lib/**/*",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "config/desktop.patch.yml",
+        "to": "config/desktop.patch.yml"
+      },
+      {
+        "from": "build/icons",
+        "to": "icons"
+      }
+    ],
+    "directories": {
+      "output": "../../.artifacts/desktop"
+    },
+    "afterPack": "scripts/verify-packaged-runtime.cjs",
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "icon": "build/icons/app-icon-light.png",
+      "artifactName": "DSH-Harness-${version}-${arch}.${ext}",
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "electronLanguages": [
+        "en-US",
+        "zh-CN"
+      ],
+      "files": [
+        "!node_modules/@deepseek-ai/node-addon-landlock-run-linux-*/**/*",
+        "!node_modules/@img/sharp-darwin-*/**/*",
+        "!node_modules/@img/sharp-libvips-darwin-*/**/*",
+        "!node_modules/@img/sharp-win32-arm64/**/*",
+        "!node_modules/@koromix/koffi-darwin-*/**/*",
+        "!node_modules/@koromix/koffi-win32-arm64/**/*",
+        "!node_modules/@vscode/ripgrep-darwin-*/**/*",
+        "!node_modules/@vscode/ripgrep-win32-arm64/**/*",
+        "!node_modules/node-addon-require-builtin-darwin-*/**/*",
+        "!node_modules/node-addon-require-builtin-win32-arm64-msvc/**/*",
+        "!node_modules/node-pty/prebuilds/darwin-*/**/*",
+        "!node_modules/node-pty/prebuilds/win32-arm64/**/*",
+        "!node_modules/node-pty/third_party/conpty/*/win10-arm64/**/*"
+      ],
+      "icon": "build/icons/app-icon-light.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "DSH-Harness-Setup-${version}-${arch}.${ext}",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "include": "build/installer.nsh",
+      "oneClick": false,
+      "perMachine": false,
+      "useZip": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Harness Enterprise Desktop"
+    }
+  }
+}
