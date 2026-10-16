@@ -22,5 +22,7 @@ The prompt section sits near the system prompt's head and is stable for the life
 
 ## Known Limitations and Deferred Work
 
+LAN HTTP supports ordinary browser RPC without secure-context `crypto.randomUUID`. Binding a LAN address or adding `trustedHosts` does not authenticate users or enable privileged configuration: settings, credentials, preset authoring, model discovery, and native host actions remain loopback-only. The remote settings page explains the restriction; privileged denials return `403` with code `loopback-required`. Use a browser on the server at `http://127.0.0.1:<port>`, or run `ssh -L 18850:127.0.0.1:18850 <server>` and open `http://127.0.0.1:18850` locally. HTTPS alone does not remove the loopback restriction. See the [LAN HTTP decision](../../../.agents/notes/implemented/bug-fix/2026-10-16-lan-http-client-access.md).
+
 - **The frontend dist must be built** — `require.resolve` of the dist fails loud at activation with a build hint; there is no source-serving fallback.
 - **`lanAddresses` is a boot-time snapshot** — interface changes after boot are not re-advertised; the printed LAN URL always matches the configured trust fence.

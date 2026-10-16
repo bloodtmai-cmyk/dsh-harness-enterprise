@@ -6,6 +6,7 @@ import {
   type ClientRequest,
 } from '@deepseek-ai/dsh-host-apiproxy/api'
 import type { ClientConnectionRpc } from '../rpc.ts'
+import { httpTransportError } from '@deepseek-ai/dsh-host-apiproxy/client'
 import { randomUuid } from './random-uuid.ts'
 
 const INTERNAL_BASE = 'http://dsh.internal'
@@ -37,7 +38,7 @@ export function createWebConnectionRpc(): ClientConnectionRpc {
         },
       )
       if (!response.ok) {
-        throw new Error(`transport failure for ${channel}/${endpoint}: HTTP ${response.status}`)
+        throw httpTransportError(response, `${channel}/${endpoint}`)
       }
       const full = serverResponseSchema.parse(await response.json())
       if (full.rpcId !== rpcId) {

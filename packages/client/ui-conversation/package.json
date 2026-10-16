@@ -50,7 +50,8 @@
   "dependencies": {
     "@deepseek-ai/dsh-settings": "workspace:^",
     "clsx": "^2.0.0",
-    "@deepseek-ai/schemastery": "workspace:^"
+    "@deepseek-ai/schemastery": "workspace:^",
+    "uuid": "^14.0.1"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "workspace:^",

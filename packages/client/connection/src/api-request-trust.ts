@@ -16,6 +16,17 @@
 import type { IncomingHttpHeaders } from 'node:http'
 import { isLoopbackHostname } from './loopback-hostname.ts'
 
+/**
+ * 创建特权 API 的结构化拒绝响应；不放宽可信 Host 或同源检查。
+ * @returns 带稳定错误码的 HTTP 403 响应。
+ */
+export function loopbackRequiredResponse(): Response {
+  return Response.json({
+    code: 'loopback-required',
+    message: '该操作仅限服务器本机访问，请使用 127.0.0.1 或 SSH 本地端口转发。',
+  }, { status: 403, headers: { 'x-dsh-error-code': 'loopback-required' } })
+}
+
 /** The request facts the fence reads from either HTTP representation. */
 interface ApiTrustRequest {
   headers: IncomingHttpHeaders | Headers

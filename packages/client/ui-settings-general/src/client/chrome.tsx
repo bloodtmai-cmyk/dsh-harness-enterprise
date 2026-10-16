@@ -48,3 +48,15 @@ export type CloseLabelProps = PropsRuntime<'settings.close'> & PropsLocale<'sett
 export function CloseLabel({ t }: CloseLabelProps) {
   return <>{t('close')}</>
 }
+
+/** 远程浏览器的设置访问说明。 */
+export type RemoteAccessNoticeProps = PropsRuntime<'settings.general.item'> & PropsLocale<'settings'>
+
+/**
+ * 提示远程浏览器使用本机入口管理特权配置。
+ * @param props - 通用设置项的本地化属性。
+ * @returns 可访问性状态提示。
+ */
+export function RemoteAccessNotice({ t }: RemoteAccessNoticeProps) {
+  return <p className={css.remoteNotice} role="status">{t('remoteAccess.notice')}</p>
+}

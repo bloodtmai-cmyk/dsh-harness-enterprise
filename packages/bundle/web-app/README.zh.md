@@ -22,5 +22,7 @@ dsh 浏览器表层组合包。[`cordis.patch.yml`](cordis.patch.yml) 叠加在 
 
 ## 已知限制与延期工作
 
+内网 HTTP 支持普通浏览器 RPC，不依赖安全上下文的 `crypto.randomUUID`。绑定内网地址或添加 `trustedHosts` 既不认证用户，也不开放特权配置：设置、凭据、预设创作、模型发现和宿主原生操作仍仅限回环访问。远程设置页会说明该限制；特权拒绝返回 `403` 和错误码 `loopback-required`。请在服务器的浏览器访问 `http://127.0.0.1:<port>`，或运行 `ssh -L 18850:127.0.0.1:18850 <server>` 后在本机打开 `http://127.0.0.1:18850`。HTTPS 本身不会解除回环限制。参见[内网 HTTP 决策](../../../.agents/notes/implemented/bug-fix/2026-10-16-lan-http-client-access.md)。
+
 - **前端 dist 必须已构建**：对 dist 的 `require.resolve` 在激活时明确报错并给出构建提示；没有从源码直接服务的回退路径。
 - **`lanAddresses` 是启动期快照**：启动后的网卡变化不会重新公告；打印的 LAN URL 始终与配置的信任栅栏一致。

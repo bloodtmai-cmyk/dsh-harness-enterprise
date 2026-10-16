@@ -12,7 +12,7 @@ import {
   type ServerResponse as RpcServerResponse,
 } from '@deepseek-ai/dsh-host-apiproxy/api'
 import { bridge, type FetchHandler } from './http-bridge.ts'
-import { isTrustedApiRequest } from './api-request-trust.ts'
+import { isTrustedApiRequest, loopbackRequiredResponse } from './api-request-trust.ts'
 import { API_PATH } from './api-path.ts'
 import type {
   ConnectionRpcEndpointMatcher,
@@ -80,7 +80,7 @@ export class HostConnectionService extends Service implements HostConnectionHand
           return fallback.fetch(request)
         }
         if (interceptor.options.authority === 'loopback' && !isTrustedApiRequest(request, [])) {
-          return Promise.resolve(new Response('forbidden', { status: 403 }))
+          return Promise.resolve(loopbackRequiredResponse())
         }
         return interceptor.fetchHandler.fetch(request)
       },

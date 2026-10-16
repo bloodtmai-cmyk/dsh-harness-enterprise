@@ -8,6 +8,7 @@
  * private fields bypass that rebinding.
  */
 import { Service } from '@deepseek-ai/cordis'
+import { v4 as randomUuid } from 'uuid'
 import type { Context } from '@deepseek-ai/cordis'
 // Type-only imports: a plugin-to-plugin value import is a bundle purity
 // error, so scope resolution goes through the sessions service (scopeOf
@@ -63,7 +64,7 @@ function browserDraftAttachment(file: File): ComposerAttachment {
   const kind = attachmentKind(file)
   return {
     kind,
-    id: crypto.randomUUID() as DraftAttachmentId,
+    id: randomUuid() as DraftAttachmentId,
     ...(kind === 'image' ? { previewUrl: URL.createObjectURL(file) } : {}),
     file,
   }

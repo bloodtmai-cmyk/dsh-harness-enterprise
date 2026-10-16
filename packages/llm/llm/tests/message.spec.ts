@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
   CallId,
   createAssistantMessage,
@@ -9,6 +9,17 @@ import {
 } from '@deepseek-ai/dsh-llm'
 
 describe('message construction', () => {
+  it('constructs messages without secure-context randomUUID', () => {
+    vi.stubGlobal('crypto', { getRandomValues: globalThis.crypto.getRandomValues.bind(globalThis.crypto) })
+    try {
+      const first = createUserMessage({ content: [], source: { kind: 'plugin', plugin: 'test' } })
+      const second = createUserMessage({ content: [], source: { kind: 'plugin', plugin: 'test' } })
+      expect(first.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)
+      expect(first.id).not.toBe(second.id)
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
   it('assigns identity immediately and returns a detached deep-frozen message', () => {
     const input = {
       content: [{ type: 'text' as const, text: 'original' }],

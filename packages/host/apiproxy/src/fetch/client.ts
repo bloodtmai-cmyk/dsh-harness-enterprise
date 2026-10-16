@@ -6,6 +6,7 @@
  */
 
 import type { z } from 'zod'
+import { v4 as randomUuid } from 'uuid'
 import type { ApiProxy, HostFrame, MuxFrame } from '../api/index.ts'
 import type { RequestPayload, ResponseValue, RpcMethodMap } from '../api/rpc-map.ts'
 import type { ClientRequest, ClientResponse, RpcMessage, RpcReceipt, RpcRequest, RpcResponse, ServerRequest } from '../api/rpc.ts'
@@ -230,6 +231,19 @@ const DEFAULT_TIMEOUT_MS = 30_000
 /** Whether a unary call uses the transport health deadline or only caller/connection cancellation. */
 type UnaryTimeoutPolicy = 'default' | 'caller-signal-only'
 
+/**
+ * 将 HTTP 拒绝转换为客户端可展示的错误，不回显服务端的任意正文。
+ * @param response - 未成功的 HTTP 响应。
+ * @param path - 请求路径。
+ * @returns 包含访问限制或 HTTP 状态的错误。
+ */
+export function httpTransportError(response: Response, path: string): Error {
+  if (response.status === 403 && response.headers.get('x-dsh-error-code') === 'loopback-required') {
+    return new Error('该操作仅限服务器本机访问，请在服务器打开 http://127.0.0.1:<端口>，或使用 SSH 本地端口转发后访问 127.0.0.1。')
+  }
+  return new Error(`transport failure for ${path}: HTTP ${response.status}`)
+}
+
 /** URL base for in-process handler injection (fake authority, opencode precedent). */
 const INTERNAL_BASE = 'http://dsh.internal'
 
@@ -296,8 +310,7 @@ export abstract class AbstractApiClient implements IApiClient {
   }
 
   protected mintRpcId(): RpcId {
-    // crypto.randomUUID is a Web API (browser + Node ≥19): keeps this base platform-neutral.
-    return RpcId(crypto.randomUUID())
+    return RpcId(randomUuid())
   }
 
   /**
@@ -321,7 +334,7 @@ export abstract class AbstractApiClient implements IApiClient {
       body: JSON.stringify(body),
       ...requestSignal === undefined ? {} : { signal: requestSignal },
     })
-    if (!response.ok) throw new Error(`transport failure for ${path}: HTTP ${response.status}`)
+    if (!response.ok) throw httpTransportError(response, path)
     return response
   }
 

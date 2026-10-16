@@ -52,7 +52,8 @@
     "@deepseek-ai/cordis": "workspace:^"
   },
   "dependencies": {
-    "@deepseek-ai/schemastery": "workspace:^"
+    "@deepseek-ai/schemastery": "workspace:^",
+    "uuid": "^14.0.1"
   },
   "devDependencies": {
     "@deepseek-ai/dsh-attachment": "workspace:^",

@@ -87,6 +87,7 @@ describe('ConversationController', () => {
     const b = await bench()
     const created = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:draft-1')
     const revoked = vi.spyOn(URL, 'revokeObjectURL').mockReturnValue(undefined)
+    vi.stubGlobal('crypto', { getRandomValues: globalThis.crypto.getRandomValues.bind(globalThis.crypto) })
     try {
       const [attachment] = b.root.createDraftImages([
         new File([new Uint8Array(4)], 'a.png', { type: 'image/png' }),
@@ -99,6 +100,7 @@ describe('ConversationController', () => {
     } finally {
       created.mockRestore()
       revoked.mockRestore()
+      vi.unstubAllGlobals()
     }
     await b.runtime.dispose()
   })
