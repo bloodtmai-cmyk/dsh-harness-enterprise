@@ -116,8 +116,8 @@ export class LocalAttachmentStore extends AttachmentStore {
     return readImageFile(this.root, ref, signal)
   }
 
-  override async validateDocument(input: SaveDocumentAttachment): Promise<{ text: string; truncated: boolean }> {
-    return extractOfficeDocument(input, this.documentLimits)
+  override validateDocument(input: SaveDocumentAttachment): Promise<{ text: string; truncated: boolean }> {
+    return Promise.resolve().then(() => extractOfficeDocument(input, this.documentLimits))
   }
 
   override async saveDocument(input: SaveDocumentAttachment): Promise<SavedDocumentAttachment> {

@@ -35,10 +35,12 @@ interface Config {
   host: '127.0.0.1' | '0.0.0.0'
   /** Listen port; zero requests an OS-assigned port. */
   port: number
+  /** Optional environment variable containing a bearer token required for every HTTP and upgrade request. */
+  accessTokenEnv?: string
 }
 ```
 
-`host` 只接受 `127.0.0.1`（默认姿态）和 `0.0.0.0`（刻意的网络暴露）；没有 TLS、认证或 origin 策略，因此绑定到非回环地址会把服务器暴露给该网络。dist 位置是认领席位的前端插件的组装事实。
+`host` 只接受 `127.0.0.1`（默认姿态）和 `0.0.0.0`（刻意的网络暴露）。配置 `accessTokenEnv` 时，它指定一个保存 32–256 字符访问令牌的环境变量；所有 HTTP 和升级请求都必须携带该 Bearer 令牌。不配置时，非回环绑定会把服务器暴露给该网络。TLS 和浏览器 origin 策略仍不属于本包。dist 位置是认领席位的前端插件的组装事实。
 
 ## 服务
 
@@ -104,5 +106,5 @@ tapIndex(transform: (html: string) => string): () => void
 applyIndexTaps(html: string): string
 ```
 
-Source: [`packages/host/webserver/src/index.ts:59`](../../packages/host/webserver/src/index.ts)
+Source: [`packages/host/webserver/src/index.ts:62`](../../packages/host/webserver/src/index.ts)
 <!-- END GENERATED cordis-surface -->

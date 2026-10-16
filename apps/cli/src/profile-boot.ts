@@ -57,7 +57,7 @@ async function publishManagedPatchStatus(
     ok,
     updatedAt: new Date().toISOString(),
     ...(error === undefined ? {} : {
-      error: (error instanceof Error ? error.message : String(error)).slice(0, 2_000),
+      error: (error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown activation error').slice(0, 2_000),
     }),
   })}\n`
   await mkdir(dirname(statusPath), { recursive: true, mode: 0o700 })

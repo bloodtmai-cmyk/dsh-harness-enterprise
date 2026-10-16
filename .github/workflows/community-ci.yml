@@ -52,6 +52,12 @@ jobs:
       - name: Type check
         run: pnpm run typecheck
 
+      - name: Test GUI components
+        run: pnpm run test:gui
+
+      - name: Verify documentation
+        run: pnpm run doc-sync
+
       - name: Test managed enterprise surface
         run: >-
           pnpm exec vitest run

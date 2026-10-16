@@ -26,11 +26,21 @@ The respective defaults are 8 entries, 2,000 characters, a 5,000 millisecond pol
 
 ## Model Experience
 
+### Automatic capture and recall
+
+#### What the model sees
+
 The system prompt receives only the small global capsule. Relevant global and current-workspace entries are recalled locally on the first step and appended as a sourced runtime message. Both forms are delimiter-framed, escape literal `<`, mask secret-shaped text, and state that memory is untrusted data below enterprise instructions, safety policy, identity, permissions, and the current user message.
 
-An empty or disabled store adds no memory text. Stable capsules remain prompt-cache friendly; changes are adopted within five seconds. Recall is deterministic and local, so no second model call, embedding service, or network memory provider receives the entries.
+#### Token effect
 
-## Known Limitations
+An empty or disabled store adds no memory text. The bounded capsule and selected recall entries add request tokens. Recall is deterministic and local, so no second model call, embedding service, or network memory provider receives the entries.
+
+#### KV Cache effect
+
+Stable capsules remain prompt-cache friendly; changes are adopted within five seconds. Recalled entries change the affected request suffix.
+
+## Known Limitations and Deferred Work
 
 - **Conservative lexical capture and recall** - the extractor intentionally misses implicit facts rather than learning assistant guesses or broad prose; retrieval is token-based, not semantic.
 - **Recent work, durable facts** - workspace summaries are a bounded recent-work ledger, not an indefinite transcript archive; stable preferences, facts, and context remain until the user deletes them.

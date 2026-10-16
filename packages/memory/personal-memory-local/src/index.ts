@@ -204,7 +204,11 @@ function memoryTitle(kind: MemoryKind, summary: string): string {
   return subject.length <= 32 ? subject : `${subject.slice(0, 31)}…`
 }
 
-/** Extract only explicit, stable, non-secret candidates from user-authored text. */
+/**
+ * Extract only explicit, stable, non-secret candidates from user-authored text.
+ * @param text - direct human message, never a model or Tool response.
+ * @returns at most three bounded preference, fact, or context drafts, without persisting them.
+ */
 export function extractMemoryCandidates(text: string): MemoryDraft[] {
   const candidates: MemoryDraft[] = []
   const sentences = text.replace(/\r\n?/g, '\n').split(/(?:\n+|(?<=[。！？!?;；]))/u)
@@ -313,7 +317,11 @@ const RECALL_SIGNALS = [
 ]
 const RECALL_SIGNAL = new RegExp(`(?:${RECALL_SIGNALS.join('|')})`, 'iu')
 
-/** Gate request-scoped recall to messages that explicitly depend on durable history. */
+/**
+ * Gate request-scoped recall to messages that explicitly depend on durable history.
+ * @param query - current human message.
+ * @returns whether it carries a history signal rather than only a greeting or acknowledgement.
+ */
 export function shouldRecallMemory(query: string): boolean {
   const normalized = query.trim().replace(/\s+/g, ' ')
   if (normalized.length === 0 || NO_RECALL_MESSAGE.test(normalized)) return false

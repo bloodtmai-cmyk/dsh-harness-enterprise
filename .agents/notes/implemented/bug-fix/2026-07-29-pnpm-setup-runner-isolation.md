@@ -4,13 +4,15 @@ Status: implemented
 
 English | [中文](2026-07-29-pnpm-setup-runner-isolation.zh.md)
 
+This note records the upstream CI design; this fork's active checks are documented in the [development guide](../../../../docs/development.md#ci-gates). Workflow names below do not imply that those workflows are installed in this fork.
+
 ## Problem
 
 `pnpm/action-setup@v4` defaults its install destination to `~/setup-pnpm` and replaces that directory during setup. The self-hosted CI failover runs six GitHub Actions runner services under one VM user, so concurrent jobs shared the same destination. In the reproducing run, three jobs entered pnpm setup within 73 milliseconds; one setup removed another process's current working directory and two jobs failed in Node's `uv_cwd` initialization. A retry on another runner passed, making the failure timing-dependent rather than a repository-test regression.
 
 ## Decision
 
-Every `pnpm/action-setup` step in [the primary CI workflow](../../../../.github/workflows/ci.yml) sets `dest: ${{ runner.temp }}/setup-pnpm`. Each runner service owns its temporary directory, so one setup cannot replace another runner's install directory. Persistent store reuse remains separate through `PNPM_CONFIG_STORE_DIR`, as established by the [pnpm provisioning decision](../process/2026-07-26-pnpm-action-setup-for-symmetric-ci-caching.md).
+Every `pnpm/action-setup` step in `.github/workflows/ci.yml` sets `dest: ${{ runner.temp }}/setup-pnpm`. Each runner service owns its temporary directory, so one setup cannot replace another runner's install directory. Persistent store reuse remains separate through `PNPM_CONFIG_STORE_DIR`, as established by the [pnpm provisioning decision](../process/2026-07-26-pnpm-action-setup-for-symmetric-ci-caching.md).
 
 [The workflow regression test](../../../../scripts/ci-workflow.spec.ts) discovers every `pnpm/action-setup` step in `ci.yml` and rejects one without the runner-private destination. This keeps newly added jobs inside the same isolation boundary.
 

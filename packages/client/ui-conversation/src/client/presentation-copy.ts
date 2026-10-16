@@ -9,7 +9,13 @@ const MEMORY_ACTION_KEYS = {
   '清空': 'approval.memoryAction.clear',
 } as const
 
-/** Localize a built-in permission preset while preserving deployment-defined labels. */
+/**
+ * Localize a built-in permission preset while preserving deployment-defined labels.
+ * @param value - permission preset identifier.
+ * @param fallback - deployment-defined label for an unknown identifier.
+ * @param t - conversation namespace translator.
+ * @returns the localized built-in label or the supplied fallback.
+ */
 export function accessModeLabel(value: string, fallback: string, t: ConversationTranslate): string {
   switch (value) {
     case 'read-only': return t('access.mode.readOnly')
@@ -20,7 +26,13 @@ export function accessModeLabel(value: string, fallback: string, t: Conversation
   }
 }
 
-/** Localize a built-in permission description while preserving deployment-defined copy. */
+/**
+ * Localize a built-in permission description while preserving deployment-defined copy.
+ * @param value - permission preset identifier.
+ * @param fallback - optional description for an unknown identifier.
+ * @param t - conversation namespace translator.
+ * @returns the built-in description or fallback, which may be undefined.
+ */
 export function accessModeDescription(
   value: string,
   fallback: string | undefined,
@@ -34,7 +46,12 @@ export function accessModeDescription(
   }
 }
 
-/** Localize stable first-party approval envelopes; free-form policy text stays verbatim. */
+/**
+ * Localize stable first-party approval envelopes; free-form policy text stays verbatim.
+ * @param reason - optional approval envelope or free-form policy reason.
+ * @param t - conversation namespace translator.
+ * @returns localized known envelopes, unchanged free-form text, or undefined for no reason.
+ */
 export function approvalReason(reason: string | undefined, t: ConversationTranslate): string | undefined {
   if (reason === undefined) return undefined
   const escalation = /^escalate sandbox to "?([^":]+)"?:\s*([\s\S]+)$/.exec(reason)

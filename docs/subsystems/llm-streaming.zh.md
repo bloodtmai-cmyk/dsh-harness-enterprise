@@ -23,6 +23,8 @@ interface ContentBlockMap {
   'text': TextBlock
   'reasoning': ReasoningBlock
   'image': ImageBlock
+  'document': DocumentBlock
+  'chart': ChartBlock
   'tool-call': ToolCallBlock
   'tool-result': ToolResultBlock
 }

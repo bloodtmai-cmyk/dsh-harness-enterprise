@@ -27,6 +27,7 @@ export function imageSizeText(bytes: number): string {
  * @param t - the conversation-namespace translate.
  * @param reason - the wire `details.reason` code.
  * @param limits - projected limits interpolated into count/size copy, when known.
+ * @param documentLimits - projected Office document limits, when known.
  * @returns the banner text.
  */
 export function attachmentErrorText(

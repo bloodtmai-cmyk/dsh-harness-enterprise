@@ -45,7 +45,11 @@ async function openDocumentBytes(
   return result.ok
 }
 
-/** Open a browser-owned draft Office file through the desktop default app, or download on Web. */
+/**
+ * Open a draft Office file through the desktop default app, or download on Web.
+ * @param file - browser-owned draft file whose bytes are read for this operation.
+ * @returns whether the desktop bridge accepted opening, or the Web download was initiated.
+ */
 export async function openDraftDocument(file: File): Promise<boolean> {
   return await openDocumentBytes(
     file.name,
@@ -54,7 +58,12 @@ export async function openDraftDocument(file: File): Promise<boolean> {
   )
 }
 
-/** Open a durable conversation Office attachment through the same desktop/Web path. */
+/**
+ * Open a durable Office attachment through the desktop app or Web download path.
+ * @param attachment - immutable conversation reference with its display name and media type.
+ * @param load - session-authorized loader for the attachment bytes.
+ * @returns whether opening was accepted; rejects when loading or bridge invocation fails.
+ */
 export async function openStoredDocument(
   attachment: DocumentAttachmentRef,
   load: DocumentLoader,

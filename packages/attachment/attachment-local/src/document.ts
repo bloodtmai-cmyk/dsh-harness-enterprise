@@ -162,7 +162,13 @@ function extractPptx(entries: Record<string, Uint8Array>): string {
   }).join('\n\n')
 }
 
-/** Validate one OOXML package and extract bounded model-visible plain text. */
+/**
+ * Validate one OOXML package and extract bounded model-visible plain text.
+ * @param input - encoded document, declared OOXML media type, and display name.
+ * @param limits - deployment byte and extracted-character limits.
+ * @returns normalized plain text and an explicit truncation flag.
+ * @throws an admission error for invalid, mismatched, or oversized packages.
+ */
 export function extractOfficeDocument(
   input: SaveDocumentAttachment,
   limits: DocumentAttachmentLimits,
@@ -183,7 +189,13 @@ export function extractOfficeDocument(
   }
 }
 
-/** Validate and durably store one OOXML document. */
+/**
+ * Validate and durably store one OOXML document.
+ * @param root - attachment store directory.
+ * @param input - encoded document, declared OOXML media type, and display name.
+ * @param limits - deployment byte and extracted-character limits.
+ * @returns the immutable reference and bounded extracted text after durable publication.
+ */
 export async function saveDocumentFile(
   root: string,
   input: SaveDocumentAttachment,
@@ -199,7 +211,14 @@ export async function saveDocumentFile(
   }
 }
 
-/** Read one OOXML document after digest, byte-length, and package-type verification. */
+/**
+ * Read one OOXML document after digest, byte-length, and package-type verification.
+ * @param root - attachment store directory.
+ * @param ref - immutable document reference.
+ * @param signal - optional cancellation for the storage read.
+ * @returns verified bytes and the supplied reference.
+ * @throws on cancellation, missing content, corruption, or an invalid OOXML package.
+ */
 export async function readDocumentFile(
   root: string,
   ref: DocumentAttachmentRef,

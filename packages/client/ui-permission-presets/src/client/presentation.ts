@@ -26,6 +26,7 @@ export function displayPresetName(name: string): string {
  * Render a permission preset under its product label.
  * @param value - preset machine value.
  * @param name - host-supplied preset name.
+ * @param t - optional permission namespace translator.
  * @returns the Full access product label or the conventional display name.
  */
 export function displayPermissionPreset(value: string, name: string, t?: PermissionTranslate): string {
@@ -40,7 +41,13 @@ export function displayPermissionPreset(value: string, name: string, t?: Permiss
   return value === FULL_ACCESS_PRESET ? 'Full access' : displayPresetName(name)
 }
 
-/** Localize a built-in preset description while preserving deployment-defined copy. */
+/**
+ * Localize a built-in preset description while preserving deployment-defined copy.
+ * @param value - preset machine value.
+ * @param description - optional deployment-defined description.
+ * @param t - permission namespace translator.
+ * @returns the localized description or the supplied optional description.
+ */
 export function displayPermissionDescription(
   value: string,
   description: string | undefined,

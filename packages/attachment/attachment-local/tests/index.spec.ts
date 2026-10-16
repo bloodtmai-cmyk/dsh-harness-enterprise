@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { zipSync } from 'fflate'
 import { describe, expect, it } from 'vitest'
 import LocalAttachmentStore, {
   DEFAULT_MAX_IMAGE_BYTES,
@@ -34,6 +35,27 @@ describe('local attachment service', () => {
       ))
       const ref = await service.saveImage({ data, mediaType: 'image/png' })
       await expect(service.readImage(ref)).resolves.toEqual({ ref, data })
+    } finally {
+      await rm(dshHome, { recursive: true, force: true })
+    }
+  })
+
+  it('validates documents without writes and rejects malformed input through a promise', async () => {
+    const dshHome = await mkdtemp(join(tmpdir(), 'dsh-document-validate-'))
+    try {
+      const service = new LocalAttachmentStore(new Context(), { dshHome })
+      const mediaType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      const invalid = service.validateDocument({ data: new Uint8Array(), mediaType, name: 'bad.docx' })
+      expect(invalid).toBeInstanceOf(Promise)
+      await expect(invalid).rejects.toMatchObject({ code: 'INVALID_DOCUMENT' })
+      const encoder = new TextEncoder()
+      const data = zipSync({
+        '[Content_Types].xml': encoder.encode('<Types/>'),
+        'word/document.xml': encoder.encode('<w:document><w:body><w:p><w:r><w:t>report</w:t></w:r></w:p></w:body></w:document>'),
+      })
+      await expect(service.validateDocument({ data, mediaType, name: 'report.docx' }))
+        .resolves.toEqual({ text: 'report', truncated: false })
+      expect(existsSync(service.root)).toBe(false)
     } finally {
       await rm(dshHome, { recursive: true, force: true })
     }

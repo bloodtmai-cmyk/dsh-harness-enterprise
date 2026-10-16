@@ -117,7 +117,11 @@ export function resultText(node: ToolResultNode): string {
   return parts.join('\n')
 }
 
-/** Return the first validated chart block attached to a settled Tool result. */
+/**
+ * Return the first validated chart block attached to a settled Tool result.
+ * @param node - settled result with validated content blocks.
+ * @returns the first chart block, or undefined when no chart is present.
+ */
 export function resultChart(
   node: ToolResultNode,
 ): Extract<ToolResultNode['content'][number], { type: 'chart' }> | undefined {

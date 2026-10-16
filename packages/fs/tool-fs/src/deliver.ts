@@ -3,7 +3,10 @@ import { defineTool } from '@deepseek-ai/dsh-tools'
 
 const MAX_DELIVERED_FILES = 12
 
-/** Register the explicit handoff from shell/external file creation to the client artifact surface. */
+/**
+ * Register the explicit handoff from shell/external file creation to client artifacts.
+ * @param ctx - plugin context owning the file Tool registration and filesystem service.
+ */
 export function applyDeliverFilesTool(ctx: Context): void {
   ctx.tools.register(defineTool({
     name: 'deliver_files',

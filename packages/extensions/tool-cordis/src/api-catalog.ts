@@ -358,6 +358,11 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
         parameters: [],
       },
       {
+        signature: 'readonly documentLimits: DocumentAttachmentLimits = { maxDocumentBytes: 0, maxDocumentsPerMessage: 0, maxMessageDocumentBytes: 0, maxExtractedCharacters: 0, mediaTypes: [], }',
+        description: 'Deployment-resolved Office document policy.',
+        parameters: [],
+      },
+      {
         signature: 'abstract validateImage(input: SaveImageAttachment): Promise<void>',
         description: 'Validate one image without persisting it. Batch callers validate every member before saving any member.',
         parameters: [{ name: 'input', description: 'encoded bytes, declared media type, and optional display name.' }],
@@ -381,6 +386,33 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
         parameters: [{ name: 'ref', description: 'durable reference from the session log.' }, { name: 'signal', description: 'optional cancellation for backend read and verification work.' }],
         returns: 'the verified bytes and canonical reference.',
         throws: ['the signal reason when aborted, or a storage error when verification fails.'],
+      },
+      {
+        signature: 'validateDocument(_input: SaveDocumentAttachment): Promise<{ text: string; truncated: boolean }>',
+        description: 'Validate one Office document without persisting it.',
+        parameters: [{ name: '_input', description: 'encoded document, declared media type, and display name.' }],
+        returns: 'extracted text and whether the configured text limit truncated it.',
+        throws: ['an unsupported-document error when the provider has no document support.'],
+      },
+      {
+        signature: 'async saveDocuments(inputs: readonly SaveDocumentAttachment[]): Promise<readonly SavedDocumentAttachment[]>',
+        description: 'Validate every member before saving an ordered Office document batch.',
+        parameters: [{ name: 'inputs', description: 'documents in their owning message order.' }],
+        returns: 'durable references and extracted text in input order; no partial result on failure.',
+      },
+      {
+        signature: 'saveDocument(_input: SaveDocumentAttachment): Promise<SavedDocumentAttachment>',
+        description: 'Validate, extract, and durably commit one Office document.',
+        parameters: [{ name: '_input', description: 'encoded document, declared media type, and display name.' }],
+        returns: 'a durable reference and bounded extracted text.',
+        throws: ['an unsupported-document error when the provider has no document support.'],
+      },
+      {
+        signature: 'readDocument(_ref: DocumentAttachmentRef, _signal?: AbortSignal): Promise<StoredDocumentAttachment>',
+        description: 'Read one Office document and verify its immutable reference.',
+        parameters: [{ name: '_ref', description: 'immutable reference recorded in the owning session.' }, { name: '_signal', description: 'optional cancellation for storage reads.' }],
+        returns: 'verified bytes with their original reference.',
+        throws: ['an attachment-not-found error when the provider has no document support.'],
       },
     ],
   },
@@ -2744,6 +2776,14 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface CancelOptions {\n    keepInbox?: boolean | undefined;\n}',
   },
   {
+    name: 'ChartBlock',
+    declaration: 'export interface ChartBlock {\n    type: \'chart\';\n    chartType: string;\n    payload: {\n        [key: string]: ChartValue;\n    };\n}',
+  },
+  {
+    name: 'ChartValue',
+    declaration: 'export type ChartValue = null | boolean | number | string | ChartValue[] | {\n    [key: string]: ChartValue;\n};',
+  },
+  {
     name: 'ClientResponse',
     declaration: 'export interface ClientResponse {\n    type: \'client-response\';\n    rpcId: RpcId;\n    result: RpcResult<unknown>;\n}',
   },
@@ -2837,7 +2877,7 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   },
   {
     name: 'ContentBlockMap',
-    declaration: 'export interface ContentBlockMap {\n    \'text\': TextBlock;\n    \'reasoning\': ReasoningBlock;\n    \'image\': ImageBlock;\n    \'tool-call\': ToolCallBlock;\n    \'tool-result\': ToolResultBlock;\n}',
+    declaration: 'export interface ContentBlockMap {\n    \'text\': TextBlock;\n    \'reasoning\': ReasoningBlock;\n    \'image\': ImageBlock;\n    \'document\': DocumentBlock;\n    \'chart\': ChartBlock;\n    \'tool-call\': ToolCallBlock;\n    \'tool-result\': ToolResultBlock;\n}',
   },
   {
     name: 'ContentBlockType',
@@ -2954,6 +2994,22 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'DirectoryRegistrationHandle',
     declaration: 'export interface DirectoryRegistrationHandle {\n    (): void;\n    replace(entries: readonly LlmConfigurableProvider[]): void;\n}',
+  },
+  {
+    name: 'DocumentAttachmentLimits',
+    declaration: 'export interface DocumentAttachmentLimits {\n    maxDocumentBytes: number;\n    maxDocumentsPerMessage: number;\n    maxMessageDocumentBytes: number;\n    maxExtractedCharacters: number;\n    mediaTypes: readonly DocumentMediaType[];\n}',
+  },
+  {
+    name: 'DocumentAttachmentRef',
+    declaration: 'export interface DocumentAttachmentRef {\n    attachmentId: AttachmentId;\n    mediaType: DocumentMediaType;\n    bytes: number;\n    name: string;\n}',
+  },
+  {
+    name: 'DocumentBlock',
+    declaration: 'export interface DocumentBlock {\n    type: \'document\';\n    attachment: DocumentAttachmentRef;\n    text: string;\n    truncated: boolean;\n}',
+  },
+  {
+    name: 'DocumentMediaType',
+    declaration: 'export type DocumentMediaType = \'application/vnd.openxmlformats-officedocument.wordprocessingml.document\' | \'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\' | \'application/vnd.openxmlformats-officedocument.presentationml.presentation\';',
   },
   {
     name: 'Domain',
@@ -3684,6 +3740,14 @@ export const TYPE_API: readonly TypeApiEntry[] = [
     declaration: 'export interface SandboxPolicyRequest {\n    session?: Session;\n    mode?: SandboxMode;\n}',
   },
   {
+    name: 'SavedDocumentAttachment',
+    declaration: 'export interface SavedDocumentAttachment {\n    ref: DocumentAttachmentRef;\n    text: string;\n    truncated: boolean;\n}',
+  },
+  {
+    name: 'SaveDocumentAttachment',
+    declaration: 'export interface SaveDocumentAttachment {\n    data: Uint8Array;\n    mediaType: DocumentMediaType;\n    name: string;\n}',
+  },
+  {
     name: 'SaveImageAttachment',
     declaration: 'export interface SaveImageAttachment {\n    data: Uint8Array;\n    mediaType: ImageMediaType;\n    name?: string;\n}',
   },
@@ -4094,6 +4158,10 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'StorageForms',
     declaration: 'export interface StorageForms {\n}',
+  },
+  {
+    name: 'StoredDocumentAttachment',
+    declaration: 'export interface StoredDocumentAttachment {\n    ref: DocumentAttachmentRef;\n    data: Uint8Array;\n}',
   },
   {
     name: 'StoredImageAttachment',

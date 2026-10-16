@@ -4,13 +4,15 @@ Status: implemented
 
 [English](2026-08-12-required-python-runtime-pull-request-ci.md) | 中文
 
+本文记录上游 CI 设计；本分支的实际检查见[开发指南](../../../../docs/development.md#ci-gates)。下文中的工作流名称不表示本分支已安装这些工作流。
+
 ## 问题
 
 普通拉取请求 CI 会针对 fake 运行时对端执行完整的 Python SDK pytest 套件，而 Node 快照使用不同的客户端与预期输出。真实 Python 客户端、打包后的 JSON-RPC 可执行文件、exe 专用快照、发布形态 wheel 包与干净安装只在可选的单文件可执行程序工作流或 Python 发布工作流中汇合。因此，运行时事件或闭包发生变化后，陈旧的 Python 投影或损坏的 wheel 包路径仍可能合并，直到后续有人构建 Python 发布候选版本时才失败。
 
 ## 决策
 
-每个拉取请求都在 [CI](../../../../.github/workflows/ci.yml) 中运行必需的 `python-runtime` 作业。该作业不使用路径过滤，调用共享的[单文件可执行程序构建器](../../../../.github/workflows/build-exe-for-python-sdk.yml)构建 `node24-linux-x64`，并参与 `all checks passed`。被调用的工作流会构建真实可执行文件，运行全部无密钥 Python 完整轮次和直接二进制场景（包括两份检入的快照），构建 SDK 与运行时 wheel 包，将二者安装进干净的虚拟环境，检查可执行文件与原生 addon 的 GLIBC 依赖，并在 manylinux 2.28 容器中运行已安装的 wheel 包。
+每个拉取请求都在 `.github/workflows/ci.yml` 中运行必需的 `python-runtime` 作业。该作业不使用路径过滤，调用共享的`.github/workflows/build-exe-for-python-sdk.yml`构建 `node24-linux-x64`，并参与 `all checks passed`。被调用的工作流会构建真实可执行文件，运行全部无密钥 Python 完整轮次和直接二进制场景（包括两份检入的快照），构建 SDK 与运行时 wheel 包，将二者安装进干净的虚拟环境，检查可执行文件与原生 addon 的 GLIBC 依赖，并在 manylinux 2.28 容器中运行已安装的 wheel 包。
 
 必需作业与 [Python 发布工作流](../process/2026-08-11-python-publication-workflow.md)共用同一构建器。其并发键包含调用方工作流，因此同一 ref 上的必需 CI 与显式完整发布验证不会互相取消。完整的 linux-x64、linux-arm64 和 macos-arm64 矩阵仍属于发布验证：平台无关的运行时、SDK 与快照行为只需要一个阻断合并的原生载体，而架构相关的可执行文件、addon、wheel 包标签与部署目标行为在发布前仍需要全部发布目标验证。
 

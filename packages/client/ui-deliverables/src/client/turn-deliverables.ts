@@ -148,7 +148,11 @@ export function basename(path: string): string {
   return at === -1 ? path : path.slice(at + 1)
 }
 
-/** Parent directory spelling suitable for the Host path opener. */
+/**
+ * Parent directory spelling suitable for the Host path opener.
+ * @param path - slash- or backslash-separated file path.
+ * @returns its parent with root spelling preserved, or dot for a bare file name.
+ */
 export function parentDirectory(path: string): string {
   const at = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'))
   if (at === -1) return '.'

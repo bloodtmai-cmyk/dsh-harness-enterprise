@@ -901,6 +901,41 @@
       "source": "packages/shell/shell/src/types.ts"
     },
     {
+      "doc": "docs/subsystems/attachment.md",
+      "symbol": "DocumentMediaType",
+      "source": "packages/attachment/attachment/src/types.ts"
+    },
+    {
+      "doc": "docs/subsystems/attachment.md",
+      "symbol": "DocumentAttachmentRef",
+      "source": "packages/attachment/attachment/src/types.ts"
+    },
+    {
+      "doc": "docs/subsystems/attachment.md",
+      "symbol": "AttachmentRef",
+      "source": "packages/attachment/attachment/src/types.ts"
+    },
+    {
+      "doc": "docs/subsystems/attachment.md",
+      "symbol": "DocumentAttachmentLimits",
+      "source": "packages/attachment/attachment/src/types.ts"
+    },
+    {
+      "doc": "docs/subsystems/attachment.md",
+      "symbol": "SaveDocumentAttachment",
+      "source": "packages/attachment/attachment/src/types.ts"
+    },
+    {
+      "doc": "docs/subsystems/attachment.md",
+      "symbol": "StoredDocumentAttachment",
+      "source": "packages/attachment/attachment/src/types.ts"
+    },
+    {
+      "doc": "docs/subsystems/attachment.md",
+      "symbol": "SavedDocumentAttachment",
+      "source": "packages/attachment/attachment/src/types.ts"
+    },
+    {
       "doc": "docs/subsystems/shell.md",
       "symbol": "ShellExecSpec",
       "source": "packages/shell/shell/src/types.ts"

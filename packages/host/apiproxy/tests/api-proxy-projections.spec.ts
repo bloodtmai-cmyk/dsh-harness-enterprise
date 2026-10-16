@@ -22,6 +22,7 @@ import UserQuestionService from '@deepseek-ai/dsh-user-questions'
 import type { MuxFrame, RpcRequest } from '@deepseek-ai/dsh-host-apiproxy/api'
 import { RpcId } from '@deepseek-ai/dsh-host-apiproxy/api/rpc'
 import { createApiProxy } from '@deepseek-ai/dsh-host-apiproxy'
+import { documentLimitsProjectionSchema } from '../src/api/sessions.schema.ts'
 
 declare module '@deepseek-ai/dsh-session-projection/types' {
   interface SessionProjectionMap {
@@ -107,6 +108,7 @@ describe('session.history projections block', () => {
     const response = await gateway.sessions.history(request({ sessionId: session.id }))
     if (!response.result.ok) throw new Error('history failed')
     expect(response.result.value.projections?.values['imageLimits']).toEqual(limits)
+    expect(response.result.value.projections?.values['documentLimits']).toEqual(ctx.attachments.documentLimits)
     // Constant unit: appending events must never broadcast an imageLimits frame.
     await new Promise(resolve => setTimeout(resolve, 0))
     const abort = new AbortController()
@@ -121,6 +123,25 @@ describe('session.history projections block', () => {
     seedMessages(session, 1)
     await drained
     expect(frames.some(f => f.type === 'session/projection' && f.key === 'imageLimits')).toBe(false)
+  })
+
+  it('accepts disabled and enabled document policies but rejects invalid limits', () => {
+    const disabled = {
+      maxDocumentBytes: 0, maxDocumentsPerMessage: 0,
+      maxMessageDocumentBytes: 0, maxExtractedCharacters: 0, mediaTypes: [],
+    }
+    expect(documentLimitsProjectionSchema.parse(disabled)).toEqual(disabled)
+    const enabled = {
+      maxDocumentBytes: 1024, maxDocumentsPerMessage: 2,
+      maxMessageDocumentBytes: 2048, maxExtractedCharacters: 1000,
+      mediaTypes: ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+    }
+    expect(documentLimitsProjectionSchema.parse(enabled)).toEqual(enabled)
+    for (const field of ['maxDocumentBytes', 'maxDocumentsPerMessage', 'maxMessageDocumentBytes', 'maxExtractedCharacters']) {
+      for (const invalid of [-1, 0.5, Infinity]) {
+        expect(documentLimitsProjectionSchema.safeParse({ ...enabled, [field]: invalid }).success).toBe(false)
+      }
+    }
   })
 
   it('leaves the imageLimits key absent while no attachment service is composed', async () => {
