@@ -20,4 +20,4 @@ None; this package neither assembles nor sends a provider request.
 
 ## Known Limitations and Deferred Work
 
-- The General section has no built-in rows; each row appears only when its owning feature plugin is mounted.
+- The General section shows server-local access guidance for remote browsers; feature rows appear only when their owning plugins are mounted.

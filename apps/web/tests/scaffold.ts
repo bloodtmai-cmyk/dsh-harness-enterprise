@@ -185,6 +185,8 @@ export interface WebScaffold {
 
 /** Options for {@link launchWebScaffold}. */
 export interface LaunchOptions {
+  /** 测试服务器的监听方式；默认只监听 127.0.0.1。 */
+  listenHost?: '127.0.0.1' | '0.0.0.0'
   /**
    * Optional product overlay applied after the shipped Web surface and before
    * the scaffold's hermetic test patches, matching the launcher's `--patch`
@@ -440,7 +442,7 @@ export async function launchWebScaffold(options: LaunchOptions = {}): Promise<We
       },
     {
       id: 'webserver',
-      config: { host: '127.0.0.1', port: 0 },
+      config: { host: options.listenHost ?? '127.0.0.1', port: 0 },
     },
     // The bundle's web-runtime row resolves the same built dist under test
     // (apps/web IS @deepseek-ai/dsh-web-frontend); only the URL line is silenced.

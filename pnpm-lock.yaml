@@ -1617,6 +1617,9 @@ importers:
       '@deepseek-ai/schemastery':
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
+      uuid:
+        specifier: ^14.0.1
+        version: 14.0.1
       ws:
         specifier: ^8.21.0
         version: 8.21.0
@@ -1933,6 +1936,9 @@ importers:
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
+      uuid:
+        specifier: ^14.0.1
+        version: 14.0.1
     devDependencies:
       '@deepseek-ai/cordis':
         specifier: workspace:^
@@ -5075,6 +5081,9 @@ importers:
       fflate:
         specifier: ^0.8.2
         version: 0.8.3
+      uuid:
+        specifier: ^14.0.1
+        version: 14.0.1
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -5488,6 +5497,9 @@ importers:
       '@deepseek-ai/schemastery':
         specifier: link:../../../vendor/schemastery
         version: link:../../../vendor/schemastery
+      uuid:
+        specifier: ^14.0.1
+        version: 14.0.1
     devDependencies:
       '@deepseek-ai/cordis':
         specifier: workspace:^

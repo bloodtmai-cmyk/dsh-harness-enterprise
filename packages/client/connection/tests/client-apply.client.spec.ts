@@ -334,6 +334,12 @@ describe('connection client apply', () => {
         new URL('https://harness.example/api/goals/create'),
         expect.objectContaining({ signal: abort.signal }),
       )
+      globalThis.fetch = vi.fn().mockResolvedValue(Response.json(
+        { code: 'loopback-required' },
+        { status: 403, headers: { 'x-dsh-error-code': 'loopback-required' } },
+      ))
+      await expect(handle.rpc.call('/api', 'settings/describe', {}))
+        .rejects.toThrow('该操作仅限服务器本机访问')
 
       ;(globalThis as Win).location = { hostname: 'localhost', search: '', origin: 'null' }
       globalThis.fetch = vi.fn().mockResolvedValue(Response.json({

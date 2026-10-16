@@ -184,7 +184,7 @@ describe('connection node half', () => {
         denied.response,
       )
       expect(denied.state.status).toBe(403)
-      expect(denied.state.body).toBe('forbidden')
+      expect(JSON.parse(String(denied.state.body))).toMatchObject({ code: 'loopback-required' })
     }
     const read = fakeResponse()
     await routes[0]!.handler(fakeRequest({ host: 'harness.example' }), read.response)

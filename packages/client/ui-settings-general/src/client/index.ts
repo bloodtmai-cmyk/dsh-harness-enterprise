@@ -21,7 +21,7 @@ import type {
   SettingsOnboardingStep, SettingsRootInjected, SettingsSectionRow,
 } from './shell-contract.ts'
 import { SettingsRoot } from './SettingsRoot.tsx'
-import { CloseLabel, HeaderContent, TriggerContent } from './chrome.tsx'
+import { CloseLabel, HeaderContent, RemoteAccessNotice, TriggerContent } from './chrome.tsx'
 import { GeneralSection } from './GeneralSection.tsx'
 import { AboutSection } from './AboutSection.tsx'
 import type { AboutSectionInjected, DesktopAppInfo } from './AboutSection.tsx'
@@ -179,6 +179,14 @@ export function apply(ctx: ClientContext): void {
     locale: NS,
     children: { 'settings.general.item': { kind: 'list', scope: 'root' } },
   }, GeneralSection))
+  if (!connection.isLoopback) {
+    ctx.slots.inject('settings.general.item', () => ctx.slots.register({
+      name: 'settings.general.item',
+      id: 'remote-access-notice',
+      order: -100,
+      locale: NS,
+    }, RemoteAccessNotice))
+  }
   if (desktopAppInfo !== undefined) {
     ctx.slots.inject('settings.section', () => ctx.slots.register({
       name: 'settings.section',

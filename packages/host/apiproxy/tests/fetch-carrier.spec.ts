@@ -706,6 +706,24 @@ describe('SSE streams through the carrier', () => {
 })
 
 describe('client respond and transport failures', () => {
+  it('explains loopback-required denials without exposing arbitrary response text', async () => {
+    const denied = new InProcessApiClient({ fetch: async () => Response.json(
+      { code: 'loopback-required', message: 'untrusted body' },
+      { status: 403, headers: { 'x-dsh-error-code': 'loopback-required' } },
+    ) })
+    await expect(denied.settings.describe({})).rejects.toThrow('该操作仅限服务器本机访问')
+    const forbidden = new InProcessApiClient({ fetch: async () => new Response('private', { status: 403 }) })
+    await expect(forbidden.settings.describe({})).rejects.toThrow('HTTP 403')
+  })
+
+  it('mints RPC identities when secure-context randomUUID is unavailable', async () => {
+    vi.stubGlobal('crypto', { getRandomValues: globalThis.crypto.getRandomValues.bind(globalThis.crypto) })
+    try {
+      await expect(client().sessions.list({})).resolves.toMatchObject({ result: { ok: true } })
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
   it('passes a client-response through and parses the receipt', async () => {
     const receipt = await client().respond({ type: 'client-response', rpcId: RpcId('known'), result: { ok: true, value: null } })
     expect(receipt).toEqual({ accepted: true })

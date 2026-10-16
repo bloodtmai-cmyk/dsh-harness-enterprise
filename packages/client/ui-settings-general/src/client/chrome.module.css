@@ -5,3 +5,11 @@
   overflow: hidden;
   white-space: nowrap;
 }
+
+.remoteNotice {
+  margin: 0;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 14px;
+  line-height: 22px;
+  overflow-wrap: anywhere;
+}
