@@ -12,7 +12,7 @@ The section includes an inline-confirmed sign-out action. Electron revokes the T
 
 #### What the model sees
 
-Nothing. This package renders sanitized session identity through IPC and does not add prompt content or tools.
+Nothing. The `settings.section` contribution renders sanitized session identity through IPC and does not add prompt content or tools.
 
 #### Token effect
 

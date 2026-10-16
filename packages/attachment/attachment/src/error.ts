@@ -79,7 +79,11 @@ export function isImageAdmissionError(
     && IMAGE_ADMISSION_ERROR_CODE_SET.has(error.code)
 }
 
-/** Distinguish caller-correctable Office document admission failures. */
+/**
+ * Distinguish caller-correctable Office document admission failures.
+ * @param error - unknown failure crossing the admission boundary.
+ * @returns whether the error carries a recognized document admission code.
+ */
 export function isDocumentAdmissionError(
   error: unknown,
 ): error is AttachmentError & { readonly code: DocumentAdmissionErrorCode } {

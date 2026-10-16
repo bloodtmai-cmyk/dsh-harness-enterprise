@@ -109,12 +109,21 @@ export abstract class AttachmentStore extends Service {
    */
   abstract readImage(ref: ImageAttachmentRef, signal?: AbortSignal): Promise<StoredImageAttachment>
 
-  /** Validate one Office document without persisting it. */
+  /**
+   * Validate one Office document without persisting it.
+   * @param _input - encoded document, declared media type, and display name.
+   * @returns extracted text and whether the configured text limit truncated it.
+   * @throws an unsupported-document error when the provider has no document support.
+   */
   validateDocument(_input: SaveDocumentAttachment): Promise<{ text: string; truncated: boolean }> {
     return Promise.reject(new AttachmentError('Office document attachments are not supported by this store.', 'UNSUPPORTED_DOCUMENT_TYPE'))
   }
 
-  /** Validate and durably save an ordered Office document batch. */
+  /**
+   * Validate every member before saving an ordered Office document batch.
+   * @param inputs - documents in their owning message order.
+   * @returns durable references and extracted text in input order; no partial result on failure.
+   */
   async saveDocuments(inputs: readonly SaveDocumentAttachment[]): Promise<readonly SavedDocumentAttachment[]> {
     const { maxDocumentsPerMessage, maxMessageDocumentBytes, mediaTypes } = this.documentLimits
     if (inputs.length > maxDocumentsPerMessage) {
@@ -134,12 +143,23 @@ export abstract class AttachmentStore extends Service {
     return saved
   }
 
-  /** Validate, extract, and durably commit one Office document. */
+  /**
+   * Validate, extract, and durably commit one Office document.
+   * @param _input - encoded document, declared media type, and display name.
+   * @returns a durable reference and bounded extracted text.
+   * @throws an unsupported-document error when the provider has no document support.
+   */
   saveDocument(_input: SaveDocumentAttachment): Promise<SavedDocumentAttachment> {
     return Promise.reject(new AttachmentError('Office document attachments are not supported by this store.', 'UNSUPPORTED_DOCUMENT_TYPE'))
   }
 
-  /** Read one Office document and verify its immutable reference. */
+  /**
+   * Read one Office document and verify its immutable reference.
+   * @param _ref - immutable reference recorded in the owning session.
+   * @param _signal - optional cancellation for storage reads.
+   * @returns verified bytes with their original reference.
+   * @throws an attachment-not-found error when the provider has no document support.
+   */
   readDocument(_ref: DocumentAttachmentRef, _signal?: AbortSignal): Promise<StoredDocumentAttachment> {
     return Promise.reject(new AttachmentError('Office document attachments are not supported by this store.', 'ATTACHMENT_NOT_FOUND'))
   }

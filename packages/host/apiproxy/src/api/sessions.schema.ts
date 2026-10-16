@@ -241,12 +241,12 @@ export const imageLimitsProjectionSchema = z.object({
   mediaTypes: z.array(z.string()),
 }) as unknown as z.ZodType<ImageAttachmentLimits>
 
-/** documentLimits projection unit schema (host-side view validation). */
+/** Document policy accepts zero limits for stores that do not support Office documents. */
 export const documentLimitsProjectionSchema = z.object({
-  maxDocumentBytes: z.number().int().positive(),
-  maxDocumentsPerMessage: z.number().int().positive(),
-  maxMessageDocumentBytes: z.number().int().positive(),
-  maxExtractedCharacters: z.number().int().positive(),
+  maxDocumentBytes: z.number().int().nonnegative(),
+  maxDocumentsPerMessage: z.number().int().nonnegative(),
+  maxMessageDocumentBytes: z.number().int().nonnegative(),
+  maxExtractedCharacters: z.number().int().nonnegative(),
   mediaTypes: z.array(z.string()),
 }) as unknown as z.ZodType<DocumentAttachmentLimits>
 

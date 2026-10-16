@@ -1,7 +1,11 @@
 import type { SearchBlockLabels, WebBlockLabels } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { TranslateNS } from '@deepseek-ai/dsh-client-ui-slots'
 
-/** Localized labels for search cards rendered inside conversation surfaces. */
+/**
+ * Localized labels for search cards rendered inside conversations.
+ * @param t - conversation namespace translator.
+ * @returns labels and count formatters for search result cards.
+ */
 export function searchBlockLabels(t: TranslateNS<'conversation'>): SearchBlockLabels {
   return {
     copy: t('copy'),
@@ -17,7 +21,11 @@ export function searchBlockLabels(t: TranslateNS<'conversation'>): SearchBlockLa
   }
 }
 
-/** Localized labels for web retrieval cards rendered inside conversation surfaces. */
+/**
+ * Localized labels for web retrieval cards rendered inside conversations.
+ * @param t - conversation namespace translator.
+ * @returns empty and truncation labels for web retrieval cards.
+ */
 export function webBlockLabels(t: TranslateNS<'conversation'>): WebBlockLabels {
   return {
     empty: t('web.empty'),

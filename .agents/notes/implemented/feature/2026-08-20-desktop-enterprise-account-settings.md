@@ -15,6 +15,12 @@ The managed desktop application authenticated an enterprise user before launch, 
 - Keep sign-out as an explicit destructive action with inline confirmation. The main process validates the IPC sender, asks the Token Broker to revoke its latest session, records only credential-free diagnostics, and relaunches into the managed login page.
 - Treat remote revocation as best effort. A network or provider failure cannot preserve the local logged-in process; Electron still quits and clears its in-memory session, while encrypted local data remains isolated by workcode.
 
+## Alternatives considered
+
+**Renderer-owned identity:** rejected because caller-supplied account fields cannot establish the signed-in principal and would widen credential exposure. The main process verifies claims and returns only sanitized profile data.
+
+**Remote-only sign-out:** rejected because a provider outage must not keep the local authenticated application alive. Revocation is best effort; local session teardown and relaunch remain unconditional.
+
 ## Verification
 
 - OAuth tests cover signed profile extraction, duplicate department-code normalization, refresh preservation, and refresh-token revocation.

@@ -23,6 +23,11 @@ function digest(data: Uint8Array): string {
   return createHash('sha256').update(data).digest('hex')
 }
 
+/**
+ * Keep a bounded leaf name without local directory paths or control characters.
+ * @param value - optional caller-supplied file name.
+ * @returns the sanitized name, or undefined when no nonempty name remains.
+ */
 export function safeAttachmentName(value: string | undefined): string | undefined {
   if (value === undefined) return undefined
   // Strip both separator styles by hand: a POSIX host treats `\` as an
@@ -145,7 +150,12 @@ export async function saveImageFile(root: string, input: SaveImageAttachment, li
   }
 }
 
-/** Persist arbitrary already-validated attachment bytes in the shared content-addressed store. */
+/**
+ * Persist already-validated attachment bytes in the shared content-addressed store.
+ * @param root - attachment store directory.
+ * @param data - immutable bytes admitted by the owning format validator.
+ * @returns the content digest after durable publication or verification of an existing object.
+ */
 export async function saveAttachmentBytes(root: string, data: Uint8Array): Promise<ImageAttachmentRef['attachmentId']> {
   const sha256 = digest(data)
   const bucket = join(root, 'objects', sha256.slice(0, 2))
@@ -225,7 +235,13 @@ export async function readImageFile(
   return { ref, data }
 }
 
-/** Read arbitrary attachment bytes and verify their content-addressed reference and length. */
+/**
+ * Read attachment bytes and verify their content-addressed reference and length.
+ * @param root - attachment store directory.
+ * @param ref - expected content digest and byte length.
+ * @param signal - optional cancellation for storage reads.
+ * @returns verified bytes; rejects on cancellation, missing content, or corruption.
+ */
 export async function readAttachmentBytes(
   root: string,
   ref: { attachmentId: ImageAttachmentRef['attachmentId']; bytes: number },

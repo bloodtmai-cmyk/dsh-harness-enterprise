@@ -71,6 +71,74 @@ interface StoredImageAttachment {
 
 `saveImage()` validates bytes and atomically commits one object before returning its reference. `validateImage()` runs the same admission checks without persisting anything; batch callers validate every member through it before saving any member, so validation rejection leaves no partial objects behind. `readImage()` accepts a reference from an authorized session path and returns bytes only after integrity verification. The service is deliberately retention-neutral: resumed and forked sessions may share objects, so reference-aware garbage collection is deferred rather than tied to any one session's deletion.
 
+## Office document attachments
+
+Office references use the same immutable content store as images. Validation extracts bounded plain text before publication; reads verify the digest, length, and OOXML package type. The base attachment service disables documents with zero limits and an empty media-type list; image-only providers still serve their image policy and session history.
+
+```ts type-equiv
+/** Modern Office Open XML formats accepted by the document attachment path. */
+type DocumentMediaType =
+  | 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  | 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  | 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+```
+
+```ts type-equiv
+/** Durable metadata for one immutable Office document. */
+interface DocumentAttachmentRef {
+  /** Opaque content-addressed identifier; never a filesystem path or bearer URL. */
+  attachmentId: AttachmentId
+  /** Media type verified against the OOXML package structure. */
+  mediaType: DocumentMediaType
+  /** Exact encoded byte length. */
+  bytes: number
+  /** Display name stripped of local path information. */
+  name: string
+}
+```
+
+```ts type-equiv
+/** Durable attachment reference accepted by the authenticated read endpoint. */
+type AttachmentRef = ImageAttachmentRef | DocumentAttachmentRef
+```
+
+```ts type-equiv
+/** Deployment-resolved Office document admission and extraction limits. */
+interface DocumentAttachmentLimits {
+  maxDocumentBytes: number
+  maxDocumentsPerMessage: number
+  maxMessageDocumentBytes: number
+  maxExtractedCharacters: number
+  mediaTypes: readonly DocumentMediaType[]
+}
+```
+
+```ts type-equiv
+/** Request to validate, extract, and durably commit one Office document. */
+interface SaveDocumentAttachment {
+  data: Uint8Array
+  mediaType: DocumentMediaType
+  name: string
+}
+```
+
+```ts type-equiv
+/** Stored Office bytes returned after reference and digest verification. */
+interface StoredDocumentAttachment {
+  ref: DocumentAttachmentRef
+  data: Uint8Array
+}
+```
+
+```ts type-equiv
+/** Validated document payload committed together with its model-visible text. */
+interface SavedDocumentAttachment {
+  ref: DocumentAttachmentRef
+  text: string
+  truncated: boolean
+}
+```
+
 <!-- BEGIN GENERATED cordis-surface (gen-cordis-catalog.ts) — do not edit between markers -->
 
 <a id="cordis-surface"></a>
@@ -119,7 +187,39 @@ abstract saveImage(input: SaveImageAttachment): Promise<ImageAttachmentRef>
  * @throws the signal reason when aborted, or a storage error when verification fails.
  */
 abstract readImage(ref: ImageAttachmentRef, signal?: AbortSignal): Promise<StoredImageAttachment>
+
+/**
+ * Validate one Office document without persisting it.
+ * @param _input - encoded document, declared media type, and display name.
+ * @returns extracted text and whether the configured text limit truncated it.
+ * @throws an unsupported-document error when the provider has no document support.
+ */
+validateDocument(_input: SaveDocumentAttachment): Promise<{ text: string; truncated: boolean }>
+
+/**
+ * Validate every member before saving an ordered Office document batch.
+ * @param inputs - documents in their owning message order.
+ * @returns durable references and extracted text in input order; no partial result on failure.
+ */
+async saveDocuments(inputs: readonly SaveDocumentAttachment[]): Promise<readonly SavedDocumentAttachment[]>
+
+/**
+ * Validate, extract, and durably commit one Office document.
+ * @param _input - encoded document, declared media type, and display name.
+ * @returns a durable reference and bounded extracted text.
+ * @throws an unsupported-document error when the provider has no document support.
+ */
+saveDocument(_input: SaveDocumentAttachment): Promise<SavedDocumentAttachment>
+
+/**
+ * Read one Office document and verify its immutable reference.
+ * @param _ref - immutable reference recorded in the owning session.
+ * @param _signal - optional cancellation for storage reads.
+ * @returns verified bytes with their original reference.
+ * @throws an attachment-not-found error when the provider has no document support.
+ */
+readDocument(_ref: DocumentAttachmentRef, _signal?: AbortSignal): Promise<StoredDocumentAttachment>
 ```
 
-Source: [`packages/attachment/attachment/src/index.ts:31`](../../packages/attachment/attachment/src/index.ts)
+Source: [`packages/attachment/attachment/src/index.ts:43`](../../packages/attachment/attachment/src/index.ts)
 <!-- END GENERATED cordis-surface -->

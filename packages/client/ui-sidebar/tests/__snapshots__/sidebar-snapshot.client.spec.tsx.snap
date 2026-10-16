@@ -115,7 +115,7 @@ exports[`sidebar shell snapshots > renders the expanded column (wordmark, capsul
         <span
           aria-hidden="true"
           data-brand-wordmark="true"
-          style="align-items: center; display: inline-flex; flex: 0 0 auto; gap: 10px; height: 24px; width: 141px;"
+          style="align-items: center; display: inline-flex; flex: 0 0 auto; gap: 10px; height: 24px; width: 83px;"
         >
           <svg
             aria-hidden="true"
@@ -124,10 +124,6 @@ exports[`sidebar shell snapshots > renders the expanded column (wordmark, capsul
             height="17.6580310880829"
             viewBox="0 0 23.16 17.04"
             width="24"
-          />
-          <span
-            data-brand-dot-logo="true"
-            style="background-color: currentcolor; display: block; flex: 0 0 auto; height: 14px; mask-image: url("data:image/png;fingerprint=772b376d"); mask-position: center; mask-repeat: no-repeat; mask-size: contain; -webkit-mask-image: url("data:image/png;fingerprint=772b376d"); -webkit-mask-position: center; -webkit-mask-repeat: no-repeat; -webkit-mask-size: contain; width: 48px;"
           />
           <span
             data-harness-badge="true"
@@ -240,7 +236,7 @@ exports[`sidebar shell snapshots > renders the expanded column in the default lo
         <span
           aria-hidden="true"
           data-brand-wordmark="true"
-          style="align-items: center; display: inline-flex; flex: 0 0 auto; gap: 10px; height: 24px; width: 141px;"
+          style="align-items: center; display: inline-flex; flex: 0 0 auto; gap: 10px; height: 24px; width: 83px;"
         >
           <svg
             aria-hidden="true"
@@ -249,10 +245,6 @@ exports[`sidebar shell snapshots > renders the expanded column in the default lo
             height="17.6580310880829"
             viewBox="0 0 23.16 17.04"
             width="24"
-          />
-          <span
-            data-brand-dot-logo="true"
-            style="background-color: currentcolor; display: block; flex: 0 0 auto; height: 14px; mask-image: url("data:image/png;fingerprint=772b376d"); mask-position: center; mask-repeat: no-repeat; mask-size: contain; -webkit-mask-image: url("data:image/png;fingerprint=772b376d"); -webkit-mask-position: center; -webkit-mask-repeat: no-repeat; -webkit-mask-size: contain; width: 48px;"
           />
           <span
             data-harness-badge="true"

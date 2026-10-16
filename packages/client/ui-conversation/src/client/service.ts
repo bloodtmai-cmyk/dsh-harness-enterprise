@@ -265,7 +265,13 @@ export class ConversationController extends Service implements IConversation {
     return pending
   }
 
-  /** Read one session-authorized durable Office attachment for native open/download. */
+  /**
+   * Read one session-authorized durable Office attachment for native open/download.
+   * @param sessionId - live session that owns the reference.
+   * @param attachment - expected immutable document reference.
+   * @returns authorized bytes after checking that all reference metadata matches.
+   * @throws when disposed, the session is absent, access fails, or metadata differs.
+   */
   async resolveDocument(sessionId: SessionId, attachment: DocumentAttachmentRef): Promise<Uint8Array> {
     if (this.disposed) throw new Error('conversation.resolveDocument: service is disposed')
     const session = this.requireSessions().binding(sessionId)?.session

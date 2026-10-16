@@ -47,7 +47,7 @@ const SessionProviderStub: SessionProviderComponent = ({ children }) => children
 function renderToolDetailsProbe(owners?: DetailsToolOwnerProps[]): DetailsSlotProps['renderSlot'] {
   return ((key: string, owner: unknown, options?: { fallback?: ReactNode }) => {
     if (key !== 'conversation.details.tool') return options?.fallback ?? null
-    owners?.push(owner as unknown as DetailsToolOwnerProps)
+    owners?.push(owner as DetailsToolOwnerProps)
     return <div data-testid="tool-details-seat" />
   }) as DetailsSlotProps['renderSlot']
 }

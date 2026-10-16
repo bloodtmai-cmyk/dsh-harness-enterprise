@@ -361,12 +361,13 @@ describe('AI Hub desktop client', () => {
     })
     const client = new AiHubClient('https://hub.example/ai-hub', 'oauth-token', fetchImpl)
 
-    await expect(client.synchronizeCatalog(join(root, 'skills'))).resolves.toMatchObject({
+    const synchronized = await client.synchronizeCatalog(join(root, 'skills'))
+    expect(synchronized.pluginPatchRevision).toMatch(/^[a-f0-9]{64}$/)
+    expect(synchronized).toMatchObject({
       workBuddyEnabled: true,
       skillCount: 1,
       pluginCount: 0,
       instructionCount: 0,
-      pluginPatchRevision: expect.stringMatching(/^[a-f0-9]{64}$/),
       snapshot: {
         available: true,
         mcps: [{

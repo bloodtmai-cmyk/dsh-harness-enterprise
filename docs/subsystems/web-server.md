@@ -35,10 +35,12 @@ interface Config {
   host: '127.0.0.1' | '0.0.0.0'
   /** Listen port; zero requests an OS-assigned port. */
   port: number
+  /** Optional environment variable containing a bearer token required for every HTTP and upgrade request. */
+  accessTokenEnv?: string
 }
 ```
 
-`host` accepts only `127.0.0.1` (default posture) and `0.0.0.0` (deliberate network exposure); there is no TLS, auth, or origin policy, so a non-loopback bind exposes the server to that network. The dist location is an assembly fact of the frontend plugin that claims the seat.
+`host` accepts only `127.0.0.1` (default posture) and `0.0.0.0` (deliberate network exposure). `accessTokenEnv`, when configured, names an environment variable holding a 32–256 character access token; every HTTP and upgrade request must supply that Bearer token. Without it, a non-loopback bind exposes the server to that network. TLS and browser-origin policy remain outside this package. The dist location is an assembly fact of the frontend plugin that claims the seat.
 
 ## The service
 
@@ -104,5 +106,5 @@ tapIndex(transform: (html: string) => string): () => void
 applyIndexTaps(html: string): string
 ```
 
-Source: [`packages/host/webserver/src/index.ts:59`](../../packages/host/webserver/src/index.ts)
+Source: [`packages/host/webserver/src/index.ts:62`](../../packages/host/webserver/src/index.ts)
 <!-- END GENERATED cordis-surface -->

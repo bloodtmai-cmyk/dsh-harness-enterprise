@@ -12,7 +12,7 @@ Destructive deletion and clear-all actions require confirmation. The UI publishe
 
 #### What the model sees
 
-Nothing. This package renders local settings through IPC; the separate Host plugin owns automatic capture and bounded model-facing recall.
+Nothing. The `settings.section` contribution renders local settings through IPC; the separate Host plugin owns automatic capture and bounded model-facing recall.
 
 #### Token effect
 

@@ -4,6 +4,8 @@ Status: implemented
 
 English | [中文](2026-08-10-event-directed-pr-review-status.zh.md)
 
+This note records the upstream CI design; this fork's active checks are documented in the [development guide](../../../../docs/development.md#ci-gates). Workflow names below do not imply that those workflows are installed in this fork.
+
 ## Problem
 
 The Issue Project status records who owns the next step of resolving work. Aggregate pull-request review state answers whether GitHub considers the pull request mergeable, but it cannot represent that handoff: an earlier `CHANGES_REQUESTED` review can remain effective after the author fixes the code and requests review again.
@@ -18,7 +20,7 @@ Ordinary subscribed pull-request events remain forward-only implementation signa
 
 The handler resolves only exact same-repository `Fixes`, `Closes`, or `Resolves` references. It does not alter terminal statuses, add an Issue with no Project status, depend on PR metadata validity, query `reviewDecision`, reconstruct review rounds, look up pull requests from Issues, or run a scheduled reconciler.
 
-[Issue lifecycle](../../../../.github/workflows/issue-lifecycle.yml) remains unsubscribed from `pull_request.ready_for_review`; neither event command depends on that action. [Issue policy](../../../../.github/workflows/issue-policy.yml) retains `ready_for_review` because it owns required-check enforcement when a human pull request enters review.
+`.github/workflows/issue-lifecycle.yml` remains unsubscribed from `pull_request.ready_for_review`; neither event command depends on that action. `.github/workflows/issue-policy.yml` retains `ready_for_review` because it owns required-check enforcement when a human pull request enters review.
 
 ## Verification
 

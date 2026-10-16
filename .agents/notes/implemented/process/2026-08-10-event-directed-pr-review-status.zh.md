@@ -4,6 +4,8 @@ Status: implemented
 
 [English](2026-08-10-event-directed-pr-review-status.md) | 中文
 
+本文记录上游 CI 设计；本分支的实际检查见[开发指南](../../../../docs/development.md#ci-gates)。下文中的工作流名称不表示本分支已安装这些工作流。
+
 ## 问题
 
 Issue 所在 Project 中的状态记录了解决工作的下一步由谁负责。PR（Pull Request）的汇总评审状态可以回答 GitHub 是否认为该 PR 可合并，却无法表示这次交接：作者修复代码并重新请求评审后，先前的 `CHANGES_REQUESTED` 评审仍可能继续生效。
@@ -18,7 +20,7 @@ Issue 生命周期工作流把评审 webhook 视为命令。`pull_request.review
 
 处理器仅解析同一仓库内严格匹配的 `Fixes`、`Closes` 或 `Resolves` 引用。它不会更改终态、将没有 Project 状态的 Issue 添加到 Project、依赖 PR 元数据是否有效、查询 `reviewDecision`、重建评审轮次、从 Issue 反向查找 PR，或运行定时协调器。
 
-[Issue 生命周期](../../../../.github/workflows/issue-lifecycle.yml)仍不订阅 `pull_request.ready_for_review`；两条事件命令均不依赖该动作。[Issue 策略](../../../../.github/workflows/issue-policy.yml)保留 `ready_for_review`，因为人工提交的 PR 进入评审时，该工作流负责执行必需检查门禁。
+`.github/workflows/issue-lifecycle.yml`仍不订阅 `pull_request.ready_for_review`；两条事件命令均不依赖该动作。`.github/workflows/issue-policy.yml`保留 `ready_for_review`，因为人工提交的 PR 进入评审时，该工作流负责执行必需检查门禁。
 
 ## 验证
 
